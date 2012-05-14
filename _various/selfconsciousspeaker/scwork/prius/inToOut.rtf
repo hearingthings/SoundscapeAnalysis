@@ -1,0 +1,66 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138
+{\fonttbl\f0\fnil\fcharset0 Monaco;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green0\blue0;\red96\green96\blue96;
+\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs18 \cf2 SynthDef\cf3 (\cf4 "trackAmbient"\cf3 , \{ \cf2 |inCh = 0, listenTime=0.05, period=0.3, duty=0.5|\cf3 \
+	\
+	\cf2 var\cf3  onamp, instamp;\
+	\cf2 var\cf3  inChain, outChain;\
+	\cf2 var\cf3  env, envTrig;\
+	\cf2 var\cf3  playPeriod = period * duty;\
+	\
+	\cf2 var\cf3  trig = \cf2 Impulse\cf3 .kr(period.reciprocal);\
+	\
+	inChain = \cf2 SoundIn\cf3 .ar(inCh);\
+	inChain = \cf2 BPF\cf3 .ar(inChain, 1000, 0.3);\
+\
+	\
+	onamp = \cf2 RunningSum\cf3 .rms(inChain, 40);\
+//	#onamp, envTrig = \cf2 MeanForTime\cf3 .ar(onamp, listenTime, trig);\
+	\
+\cf5 //	onamp = onamp.ampdb + 12;\cf3 \
+\cf5 //	onamp = onamp.dbamp;\cf3 \
+\
+\cf5 //	instamp = (1232 * onamp) - 0.006699;\cf3 \
+\
+	instamp = (72.16 * onamp) - 0.0004715;\
+\
+\cf5 //	instamp = (1000 * onamp) - 0.0004715;\cf3 \
+\
+	\
+\cf5 	onamp.poll(T2A.ar(trig));\cf3 \
+	\
+	envTrig = TDelay.kr(trig, listenTime);\
+	outChain = \cf2 WhiteNoise\cf3 .ar(instamp);\
+	outChain = \cf2 BPF\cf3 .ar(outChain, 1000, 0.3);\
+	\
+	env = \cf2 Env\cf3 ([0, 0, 1, 1, 0], [0, playPeriod * 0.1, playPeriod*0.8, playPeriod*0.1]);\
+	env = \cf2 EnvGen\cf3 .kr(env, gate: envTrig);\
+	\
+	\
+	\
+	outChain = env * outChain;\
+	\
+	\
+	\cf2 Out\cf3 .ar(0, outChain);\
+	\cf2 Out\cf3 .ar(1, inChain);\
+	\cf2 Out\cf3 .ar(2, onamp);\
+	\cf2 Out\cf3 .ar(4, K2A.ar(instamp));\
+	\cf2 Out\cf3 .ar(5, K2A.ar(envTrig));\
+	\
+	\
+\}).store;\
+\
+v = \cf2 Synth\cf3 (\cf4 "trackAmbient"\cf3 );\
+\
+\
+\
+\
+s.options.hardwareBufferSize = 64\
+s.options.blockSize = 1\
+s.boot\
+\
+s.
+\f1\b\fs24 \cf0 recChannels_(5);}

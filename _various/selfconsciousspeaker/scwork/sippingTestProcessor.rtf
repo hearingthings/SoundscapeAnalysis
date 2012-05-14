@@ -1,0 +1,29 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red191\green0\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs18 \cf2 r = ~results.collect\{ \cf3 |res|\cf2 \
+	\
+	\cf3 var\cf2  ambi, on, amp;\
+	ambi = res.collect\{ \cf3 |e|\cf2 \
+		e[\cf4 \\ambiPre\cf2 ]\
+	\};\
+	ambi.debug;\
+	ambi = ambi.percentile(0.5);\
+	on = res.collect\{ \cf3 |e|\cf2  e[\cf4 \\on\cf2 ][0] \};\
+	on = on.percentile(0.5);\
+	amp = res.collect\{ \cf3 |e|\cf2  e[\cf4 \\on\cf2 ][1] \};\
+	amp = amp.percentile(0.5);\
+//	(on.ampdb - ambi.ampdb);\
+\cf5 	[ambi, on, amp]			\cf2 \
+\};\
+\
+r = r.flop\
+r.plot\
+r.multiplot(labels: [\cf6 "ambi"\cf2 , \cf6 "on"\cf2 ], drawLines: \cf3 true\cf2 )\
+~results\
+\
+\
+\cf5 //how to find relationship between amplitude and }

@@ -1,0 +1,57 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138
+{\fonttbl\f0\fnil\fcharset0 Monaco;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f0\fs24 \cf2 //prepping matlab files, dblevel vs miclevel\cf3 \
+//db on meter vs amplitude on microphone\
+\
+\cf2 //t = Object.readArchive("
+\f1 \cf2 data/scs/micLevels/levTest_3.txt")
+\f0 \cf3 \
+\
+\cf2 //version 1 - preLevel, onLevel, inAmp;\cf3 \
+l = t.data.collect\{ \cf4 |ev|\cf3  \
+	[ev[\cf5 \\mic\cf3 ], ev[\cf5 \\db\cf3 ]] \
+\};\
+\
+~mic = l.flop[0];\
+~db = l.flop[1];\
+\
+f = \cf4 File\cf3 .new(
+\f1 \cf6 "data/scs/dbMicLevel2/mic.txt"
+\f0 \cf3 , \cf6 "w"\cf3 );\
+~mic.do\{ \cf4 |lev|\cf3  f.write(lev.asString); f.write(\cf6 ", "\cf3 ) \};\
+f.close;\
+\
+f = \cf4 File\cf3 .new(\cf6 "
+\f1 \cf6 data/scs/dbMicLevel2/db.txt"
+\f0 \cf3 , \cf6 "w"\cf3 );\
+~db.do\{ \cf4 |lev|\cf3  f.write(lev.asString); f.write(\cf6 ", "\cf3 ) \};\
+f.close;\
+\
+\
+\
+\
+\cf2 ///coefficients from matlab\
+~micDBToDBA1000hz = \{ |mic|\
+	(0.8284 * mic) + 86.2;	\
+\};\cf3 \
+\cf2 /*EXCLUSION - LINEAR\
+Linear model Poly1:\
+     f(x) = p1*x + p2\
+Coefficients (with 95% confidence bounds):\
+       p1 =      0.8284  (0.8064, 0.8503)\
+       p2 =        86.2  (85.34, 87.05)\
+*/\cf3 \
+\
+\
+\cf2 /* NO EXCLUSION!!!\
+Linear model Poly2:\
+     f(x) = p1*x^2 + p2*x + p3\
+Coefficients (with 95% confidence bounds):\
+       p1 =     0.01336  (0.012, 0.01472)\
+       p2 =       1.899  (1.771, 2.026)\
+       p3 =       106.5  (103.7, 109.2)\
+*/}
