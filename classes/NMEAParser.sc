@@ -33,8 +33,15 @@ g.size
 
 NMEAParser {
 	
+	var file;
+	
+	*new { |file|
+		^super.newCopyArgs(file);	
+	}
+	
 	getLineFromFile { |file| 
 		var i=0, c=file.getChar, l="";
+
 		while( { (i < 256) and: (c != $$) } ) {
 			c =file.getChar;
 		};
@@ -42,25 +49,25 @@ NMEAParser {
 		if (c != $$) { "NMEAParser: no $ Char in first 256 bytes of file".throw; };
 
 		while({(c.ascii != 13) and: (i <256) }) {
-			c = f.getChar;
+			c = file.getChar;
 			l = l ++ c;
 			i = i+1;	
 		};
 		
-		if (l[0..2] != "$GP") { "No valid NMEA sentence found".throw; };
+		if (l[0..1] != "GP") { "No valid NMEA sentence found".throw; };
 		
-		l; //return new line
+		^l; //return new line
 	}
 
 	processLine { |line|
 		
-		var thisType = line[1..5]; //TODO: check if dollar sign has been stripped out
+		var thisType = line[0..4]; //TODO: check if dollar sign has been stripped out
 		var types = ["GPGSA", "GPGSV", "GPRMC", "GPVTG", "GPGGA"];
-		
+		thisType.debug("thisType");
 		types.do{ |type, i|
 			if (type == thisType) {
 				type = "parse" ++ type;
-				this.perform(type.asSymbol, line);
+				^this.perform(type.asSymbol, line.split($,));
 			};
 		};		
 	}
@@ -74,13 +81,14 @@ NMEAParser {
 			17, \VDOP
 		];
 		var outDic = Dictionary.new;
+		outDic.put(\TYPE, \GPGSA);
 		
 		keys.clump(2).do{ |index, i|
 			var key = index[1];
 			var obj, res;
 			index = index[0];
 			if (index.size == 0) { //we're working with a single integer
-				outDic.put(key, parseElement(line[index]));
+				outDic.put(key, this.parseElement(line[index]));
 			} {
 				//we have an array
 				index.do{ |in, ini|
@@ -88,12 +96,13 @@ NMEAParser {
 				};
 			};	
 		};
-		line = line.split($,);
+		^outDic;
 		
 	}
 	
 	parseGPGSV { |line|
-	
+		var outDic = Dictionary.new;
+		^outDic;
 	}
 	
 	parseGPRMC { |line|
@@ -112,23 +121,58 @@ NMEAParser {
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
+		var outDic = Dictionary.new;
+
+		var keys = [
+			1,	\UTCTIME,
+			2, 	\DATASTATUS,
+			3, 	\LATFIX,
+			4, 	\NORTHSOUTH,
+			5,	\LONGFIX,
+			6,	\EASTWEST,
+			7,	\SPEED,
+			
+			9,	\UTCDATE
+		];
+		outDic.put(\TYPE, \GPRMC);
+		
+		keys.clump(2).do{ |index, i|
+			var key = index[1];
+			index = index[0];
+			
+			outDic.put(key, this.parseElement(line[index]));
+		};
+		^outDic;
 	}
 	
 	parseGPVTG { |line|
-		
+		var outDic = Dictionary.new;
+		^outDic;
 	}
 	
 	parseGPGGA { |line|
-	
+		var outDic = Dictionary.new;
+		var keys = [
+			1, 	\UTCTIME
+		];
+		outDic.put(\TYPE, \GPGGA);
+		keys.clump(2).do{ |index, i|
+			var key = index[1];
+			index = index[0];
+			
+			outDic.put(key, this.parseElement(line[index])).debug("gpgga");
+		};
+		^outDic;
 	}
 
 	parseElement { |el|
 		var obj, res;
+		el.debug("parseElement");
 		obj = try{ res = el.interpret };
 		if (obj.isNil) {
 			res = el;
 		};
-		res;
+		^res;
 	}
 	
 	
