@@ -1,24 +1,37 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf230
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red96\green96\blue96;\red191\green0\blue0;
-\red0\green0\blue191;}
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red96\green96\blue96;
+\red255\green102\blue0;\red0\green0\blue191;\red0\green0\blue255;\red51\green51\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf2 p = \cf3 "/Users/blank/projects/recordings/onCars/rear_4-12-2011.wav"\cf2 ;\
-~outpath = \cf3 "rear_4-12-2011(5-50-95).txt"\cf2 .resolveRelative;\
+\f0\fs24 \cf2 //version 1\cf3 \
+p = \cf4 "/Users/blank/projects/recordings/onCars/rear_4-12-2011.wav"\cf3 ;\
+\cf5 ~outpath\cf3  = \cf4 "rear_4-12-2011(5-50-95).txt"\cf3 .resolveRelative;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs18 \cf3 \
+\cf2 //version 2\cf3 \
+p = \cf4 "/Users/danielstclair/projects/soundscapeSensor/longRecordings/MayZoom/excerpts_fortest/20mins.wav"\cf3 ;
+\fs24 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf5 ~outpath\cf3  = \cf4 "20mintest.txt"\cf3 .resolveRelative;\
+\
+//version 3 - fucking huge!!!\
+p = "/Users/danielstclair/projects/soundscapeSensor/longRecordings/MayZoom/FOLDER01/STE-000.wav";\
+~outpath = "hugetest.txt";\
 \
 \
 \
-~startFreq = 20; 	\cf4 //16 is ~20cps, 28 is 41hz\cf2 \
-~endFreq = 20000;		\cf4 //135 is ~20000cps\cf2 \
-\pard\pardeftab720\ri0
-\cf2 ~bandWidthSemitones = 4;\
+\cf5 ~startFreq\cf3  = 20; 	\cf2 //16 is ~20cps, 28 is 41hz\cf3 \
+\cf5 ~endFreq\cf3  = 20000;		\cf2 //135 is ~20000cps\cf3 \
+\pard\pardeftab720\ri0\ql\qnatural
+\cf5 ~bandWidthSemitones\cf3  = 4;\
 \
-~percentiles = [5, 50, 95];\
+\cf5 ~percentiles\cf3  = [1, 50, 99];\
 \
-~percentileArg = ~percentiles/100;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
-\cf2 f = \cf5 SoundFile\cf2 .new(p);\
+\cf5 ~percentileArg\cf3  = \cf5 ~percentiles\cf3 /100;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 f = \cf6 SoundFile\cf3 .new(p);\
 \
 f.openRead;\
 n = f.numFrames;\
@@ -26,49 +39,49 @@ z = 8192;\
 h = 1;\
 n = n / (z * h);\
 \
-a = \cf5 Signal\cf2 .hammingWindow(z, 0);\
-c = \cf5 Signal\cf2 .fftCosTable(z);\
-\pard\pardeftab720\ri0
-\cf2 \
+a = \cf6 Signal\cf3 .hammingWindow(z, 0);\
+c = \cf6 Signal\cf3 .fftCosTable(z);\
+\pard\pardeftab720\ri0\ql\qnatural
+\cf3 \
 \
-~bands = (~startFreq.cpsmidi, ~startFreq.cpsmidi+~bandWidthSemitones..~endFreq.cpsmidi);\
+\cf5 ~bands\cf3  = (\cf5 ~startFreq\cf3 .cpsmidi, \cf5 ~startFreq\cf3 .cpsmidi+\cf5 ~bandWidthSemitones\cf3 ..\cf5 ~endFreq\cf3 .cpsmidi);\
  \
-~bands = ~bands.midicps;\
-~bandsAsFreqs = ~bands;\
-~bandsAsFreqs = ~bandsAsFreqs.round(0.1);\
-~freqToBin = \{ \cf5 |freq, fftSize, sr=44100|\cf2 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\cf5 ~bands\cf3  = \cf5 ~bands\cf3 .midicps;\
+\cf5 ~bandsAsFreqs\cf3  = \cf5 ~bands\cf3 ;\
+\cf5 ~bandsAsFreqs\cf3  = \cf5 ~bandsAsFreqs\cf3 .round(0.1);\
+\cf5 ~freqToBin\cf3  = \{ \cf7 |freq, fftSize, sr=44100|\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\fs18 \cf2 	\cf5 var\cf2  bin = (freq/(sr/2)) * fftSize;\
+\fs18 \cf3 	\cf7 var\cf3  bin = (freq/(sr/2)) * fftSize;\
 	bin = bin.floor.asInteger;
 \fs24 		\
-\pard\pardeftab720\ri0
-\cf2 \}; \
-~bands = ~bands.collect\{ \cf5 |band|\cf2  ~freqToBin.value(band, z/2) \};\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
-\cf2 \
-r = n.asInteger.collect\{ \cf5 |index|\cf2 \
-	\cf5 var\cf2  start  = index * (z*h);\
-	\cf5 var\cf2  end = start + z;\
-	\cf5 var\cf2  data = \cf5 FloatArray\cf2 .newClear(z);\
-	\cf5 var\cf2  imag = \cf5 Signal\cf2 .newClear(z);\
-	\cf5 var\cf2  bands;\
+\pard\pardeftab720\ri0\ql\qnatural
+\cf3 \}; \
+\cf5 ~bands\cf3  = \cf5 ~bands\cf3 .collect\{ \cf7 |band|\cf3  \cf5 ~freqToBin\cf3 .value(band, z/2) \};\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 \
+r = n.asInteger.collect\{ \cf7 |index|\cf3 \
+	\cf7 var\cf3  start  = index * (z*h);\
+	\cf7 var\cf3  end = start + z;\
+	\cf7 var\cf3  data = \cf6 FloatArray\cf3 .newClear(z);\
+	\cf7 var\cf3  imag = \cf6 Signal\cf3 .newClear(z);\
+	\cf7 var\cf3  bands;\
 	\
 	f.seek(start, 0);\
 	f.readData(data);\
 \
 	\
-	data = \cf5 Signal\cf2 .newFrom(data);\
+	data = \cf6 Signal\cf3 .newFrom(data);\
 	data = data * a;\
 	data = data.fft( imag, c);\
 	data = data.magnitude[0..(z/2).asInteger];\
 	\
-	bands = \cf5 Array\cf2 .newClear(~bands.size-1);\
+	bands = \cf6 Array\cf3 .newClear(\cf5 ~bands\cf3 .size-1);\
 	\
-	~bands.doAdjacentPairs\{ \cf5 |b1, b2, i|\cf2 \
-		\cf5 var\cf2  nBands = b2-b1;\
-		\cf5 var\cf2  lo = b1, hi = b2-1;\
-		\cf5 var\cf2  band = data[lo..hi];\
+	\cf5 ~bands\cf3 .doAdjacentPairs\{ \cf7 |b1, b2, i|\cf3 \
+		\cf7 var\cf3  nBands = b2-b1;\
+		\cf7 var\cf3  lo = b1, hi = b2-1;\
+		\cf7 var\cf3  band = data[lo..hi];\
 		band = band.mean;\
 		bands.put(i, band);\
 	\};\
@@ -78,80 +91,80 @@ r = n.asInteger.collect\{ \cf5 |index|\cf2 \
 \
 f.close;\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\fs18 \cf2 ~magTodB = \{ \cf5 |mag, reference = 0|\cf2 \
+\fs18 \cf5 ~magTodB\cf3  = \{ \cf7 |mag, reference = 0|\cf3 \
 	20 * log10(mag/reference)\
 \};\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\fs24 \cf2 \
+\fs24 \cf3 \
 t = r.flop;\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\fs18 \cf2 t = t.collect\{ \cf5 |r|\cf2  r.collect\{\cf5 |mag|\cf2  ~magTodB.value(mag, 100) \} \};
+\fs18 \cf3 t = t.collect\{ \cf7 |r|\cf3  r.collect\{\cf7 |mag|\cf3  \cf5 ~magTodB\cf3 .value(mag, 100) \} \};
 \fs24 \
 \
 \
-u = t.collect\{ \cf5 |bin|\cf2  bin.
-\fs18 percentile(~
-\fs24 percentileArg
-\fs18 )
+u = t.collect\{ \cf7 |bin|\cf3  bin.
+\fs18 percentile(\cf5 ~
+\fs24 \cf5 percentileArg
+\fs18 \cf3 )
 \fs24  \};\
 \
 v = u.flop;\
 \
-v.multiplot(~percentiles.collect(\cf5 _\cf2 .asString), drawLines: \cf5 true\cf2 );\
+v.multiplot(\cf5 ~percentiles\cf3 .collect(\cf6 _\cf3 .asString), drawLines: \cf8 true\cf3 );\
 \
 \
 (\
-f = \cf5 File\cf2 .new(~outpath, \cf3 "w"\cf2 );\
+f = \cf6 File\cf3 .new(\cf5 ~outpath\cf3 , \cf4 "w"\cf3 );\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
-\cf4 //WRITE THE HEADER\cf2 \
-f.write(\cf3 "bin-freqs,"\cf2 );\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //WRITE THE HEADER\cf3 \
+f.write(\cf4 "bin-freqs,"\cf3 );\
 \
-~percentiles.do\{ \cf5 |pc, i|\cf2 \
+\cf5 ~percentiles\cf3 .do\{ \cf7 |pc, i|\cf3 \
 	f.write(pc.asString);\
-	if (i != ~percentiles.lastIndex)\
+	if (i != \cf5 ~percentiles\cf3 .lastIndex)\
 		\{\
-			f.write(\cf3 ","\cf2 );\
+			f.write(\cf4 ","\cf3 );\
 		\} \{\
 			f.write(10.asAscii);	\
 		\};	\
 \};\
 \
-\cf4 //WRITE THE DATA\cf2 \
-u.do\{ \cf5 |binVals, i|\cf2 \
-	\cf5 var\cf2  binFreqString = ~bandsAsFreqs[i].asString;\
-	f.write(binFreqString ++ \cf3 ","\cf2 );\
-	binVals.do\{ \cf5 |val, bi|\cf2 \
+\cf2 //WRITE THE DATA\cf3 \
+u.do\{ \cf7 |binVals, i|\cf3 \
+	\cf7 var\cf3  binFreqString = \cf5 ~bandsAsFreqs\cf3 [i].asString;\
+	f.write(binFreqString ++ \cf4 ","\cf3 );\
+	binVals.do\{ \cf7 |val, bi|\cf3 \
 		f.write(val.asString);\
 		if (bi != binVals.lastIndex)\
 			\{\
-				f.write(\cf3 ","\cf2 );\
+				f.write(\cf4 ","\cf3 );\
 			\} \{\
 				f.write(10.asAscii);\
 			\};		\
 	\};\
 \};\
 \
-\cf4 //~bands.doAdjacentPairs\{ |f1, f2, i|\cf2 \
-\cf4 //	f.write(f1.asString + "-" + f2);\cf2 \
-\cf4 //	f.write(",");	\cf2 \
-\cf4 //\};\cf2 \
-\cf4 //\cf2 \
-\cf4 //f.write("/n");\cf2 \
-\cf4 //\cf2 \
-\cf4 //v.do\{ |row| row.do\{ |val| f.write(val.asString); f.write(",") \}; f.write("/n") \};\cf2 \
+\cf2 //~bands.doAdjacentPairs\{ |f1, f2, i|\cf3 \
+\cf2 //	f.write(f1.asString + "-" + f2);\cf3 \
+\cf2 //	f.write(",");	\cf3 \
+\cf2 //\};\cf3 \
+\cf2 //\cf3 \
+\cf2 //f.write("/n");\cf3 \
+\cf2 //\cf3 \
+\cf2 //v.do\{ |row| row.do\{ |val| f.write(val.asString); f.write(",") \}; f.write("/n") \};\cf3 \
 \
 f.close;\
 )\
 \
 \
 \
-(\cf4 //HOW MUCH VARIANCE BETWEEN 95% AND 5%?\cf2 \
+(\cf2 //HOW MUCH VARIANCE BETWEEN 95% AND 5%?\cf3 \
 	\
 (v[2] - v[0]).plot\
 \
@@ -160,6 +173,6 @@ f.close;\
 \
 \
 \
-\cf4 //\cf2 \
-\cf4 //v.put(2, v[2].clip(0, 10))\cf2 \
-\cf4 //v[2]}
+\cf2 //\cf3 \
+\cf2 //v.put(2, v[2].clip(0, 10))\cf3 \
+\cf2 //v[2]}
